@@ -1,4 +1,4 @@
-FROM thies88/base-mono
+FROM thies88/base-alpine-mono
 
 MAINTAINER thies88
 
