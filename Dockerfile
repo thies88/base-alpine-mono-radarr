@@ -14,6 +14,8 @@ ENV XDG_CONFIG_HOME="/config/xdg"
 
 RUN apk update
 RUN apk add --no-cache tar curl jq && \
+echo "**** install radarr packages ****" && \
+apk add --no-cache libmediainfo && \
 echo "**** install radarr ****" && \
  if [ -z ${RADARR_RELEASE+x} ]; then \
 	RADARR_RELEASE=$(curl -sX GET "https://api.github.com/repos/Radarr/Radarr/releases" \
