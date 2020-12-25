@@ -28,7 +28,7 @@ echo "**** install radarr ****" && \
  curl -o \
  /tmp/radar.tar.gz -L \
 	"${radarr_url}" && \
- tar ixzf \
+ tar xzf \
  /tmp/radar.tar.gz -C \
 	/opt/radarr --strip-components=1 && \
  echo "**** clean up ****" && \
