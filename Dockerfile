@@ -10,30 +10,30 @@ LABEL build_version="Alpine-base-mono:- ${VERSION} Build-date:- ${BUILD_DATE}"
 LABEL maintainer="Thies88"
 
 # environment settings
+ARG DEBIAN_FRONTEND="noninteractive"
 ENV XDG_CONFIG_HOME="/config/xdg"
+ARG RADARR_BRANCH="master"
 
 RUN apk update
 RUN apk add --no-cache tar curl jq && \
 echo "**** install radarr packages ****" && \
 apk add --no-cache libmediainfo && \
 echo "**** install radarr ****" && \
+ mkdir -p /app/radarr/bin && \
  if [ -z ${RADARR_RELEASE+x} ]; then \
-	RADARR_RELEASE=$(curl -sX GET "https://api.github.com/repos/Radarr/Radarr/releases" \
-	| jq -r '.[0] | .tag_name'); \
+	RADARR_RELEASE=$(curl -sL "https://radarr.servarr.com/v1/update/${RADARR_BRANCH}/changes?os=linux" \
+	| jq -r '.[0].version'); \
  fi && \
- radarr_url=$(curl -s https://api.github.com/repos/Radarr/Radarr/releases/tags/"${RADARR_RELEASE}" \
-	|jq -r '.assets[].browser_download_url' |grep linux) && \
- mkdir -p \
-	/opt/radarr && \
  curl -o \
- /tmp/radar.tar.gz -L \
-	"${radarr_url}" && \
- tar xzf \
- /tmp/radar.tar.gz -C \
-	/opt/radarr --strip-components=1 && \
+	/tmp/radarr.tar.gz -L \
+	"https://radarr.servarr.com/v1/update/${RADARR_BRANCH}/updatefile?version=${RADARR_RELEASE}&os=linux&runtime=netcore&arch=x64" && \
+ tar ixzf \
+	/tmp/radarr.tar.gz -C \
+	/app/radarr/bin --strip-components=1 && \
  echo "**** clean up ****" && \
  apk del tar curl && \
  rm -rf \
+ 	/app/radarr/bin/Radarr.Update \
 	/tmp/* \
 	/var/lib/apt/lists/* \
 	/var/tmp/*
